@@ -5,51 +5,63 @@
 //#include <math.h>
 #include <cmath>
 #include <string>
-#include <sstream>
+#include <sys/time.h>
 
-std::vector<bool> duglas_peker(std::vector<std::pair<double, double>>, double);
+std::vector<bool> duglas_peker(std::vector<std::pair<int, double>>, double, int);
 
 int main(int argc, char *argv[])
 {
-    std::vector<std::pair<double, double>> values;// {{1,5},{2,3},{5,1},{6,4},{9,6},{11,4},{13,3},{14,2},{18,5}};
+    struct timeval tv;
+    std::vector<std::pair<int, double>> values;// {{1,5},{2,3},{5,1},{6,4},{9,6},{11,4},{13,3},{14,2},{18,5}};
     std::vector<bool> values_of_return;
-    int i = 0;
-    std::string str;
-    std::ifstream file("./Data.txt");
-    double str1;
-    std::stringstream ss;
+    unsigned i = 0;
+    //std::string str;
+    std::ifstream file("./data_qt_data_input.txt");
+    //double str1;
+    //std::stringstream ss;
     int a;
+    int x, values_count;
+    double y;
 
-    while(getline(file, str))
+    while(!file.eof())//getline(file, str))
     {
-        a = str.find(',', 0);
+        /*a = str.find(',', 0);
 
         if(a>=0)
             str[a] = '.';
 
         str = str.substr(str.find('\t'));
         str1 = 0;
-        str1 = atof(str.c_str());
+        str1 = atof(str.c_str());*/
         //ss << str;
         //ss >> str1;
         //ss.str(std::string());
         //std::cout << i << std::endl;
         //std::cout << str << ' ' << str1 << std::endl;
-
-        values.push_back({i, str1});
+        file >> x >> y;
+        values.push_back({x, y});
+        //values.push_back({i, str1});
         ++i;
     }
 
+    values_count = i;
     file.close();
 
     /*for(i = 0; i < values.size(); ++i)
     {
         //std::cout << values[i].second << std::endl;
     }*/
+    gettimeofday(&tv, NULL);
+    
+    double time_begin = ((double)tv.tv_sec) * 1000 + ((double)tv.tv_usec) / 1000;
 
-    values_of_return = duglas_peker(values, 0.05);
+    values_of_return = duglas_peker(values, 10, values_count);
 
-    for(i = 0; i < values_of_return.size(); ++i)
+    gettimeofday(&tv, NULL);
+    
+    double time_end = ((double)tv.tv_sec) * 1000 + ((double)tv.tv_usec) / 1000;
+
+    /*for(i = 0; i < values_of_return.size(); ++i)
     {
         if(values_of_return[i])
         {
@@ -57,32 +69,41 @@ int main(int argc, char *argv[])
         }
         else
             values[i].second = 0;
-    }
+    }*/
 
-    std::ofstream file1("./data_qt_data1.txt");
+    std::ofstream file1("./data_qt_data_output.txt");
 
-    for(i = 0; i < values.size(); ++i)
+    for(i = 0; i < values_count; ++i)
     {
-        file1 << values[i].second << std::endl;
+        if(values_of_return[i])
+        {
+            std::cout << values[i].first << ' ' << values[i].second << std::endl;
+            file1 << values[i].first << ' ' << values[i].second << std::endl;
+        }
     }
 
     file1.close();
     
+    double total_time_ms = time_end - time_begin;
+
+    std::cout << total_time_ms << std::endl;
+    std::system("~/code/python/plot.py");
+
     return 0;
 }
 
-std::vector<bool> duglas_peker(std::vector<std::pair<double, double>> values, double e)
+std::vector<bool> duglas_peker(std::vector<std::pair<int, double>> values, double e, int values_count)
 {
     std::stack<std::pair<int, int>> index_of_value;
     std::vector<bool> values_for_return;
 
-    for(int i = 0; i < values.size(); ++i)
+    for(int i = 0; i < values_count; ++i)
     {
         values_for_return.push_back(true);
     }
 
     //index_of_value.push({values.begin(), values.end()});
-    index_of_value.push({0, values.size()-1});
+    index_of_value.push({0, values_count-1});
     while(!index_of_value.empty())
     {
         int startIndex = index_of_value.top().first;
