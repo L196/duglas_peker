@@ -77,7 +77,7 @@ int main(int argc, char *argv[])
     values_count = values_of_return.size();
 
     for(i = 0; i < values_count; ++i)
-            file1 << values[values_of_return[i]].first << ' ' << values[values_of_return[i]].second << std::endl;
+        file1 << values[values_of_return[i]].first << ' ' << values[values_of_return[i]].second << std::endl;
 
     file1.close();
     
@@ -115,8 +115,10 @@ std::vector<int> duglas_peker(std::vector<std::pair<int, double>> values, double
         dMax = 0;
 
         //length_of_line = std::sqrt((values[startIndex].first - values[endIndex].first) * (values[startIndex].first - values[endIndex].first) + (values[startIndex].second - values[endIndex].second) * (values[startIndex].second - values[endIndex].second));
-        a_hight = values[startIndex].first - values[endIndex].first;
-        b_hight = values[startIndex].second - values[endIndex].second;
+        //a_hight = values[startIndex].first - values[endIndex].first;
+        //b_hight = values[startIndex].second - values[endIndex].second;
+        a_hight = values[endIndex].first - values[startIndex].first;
+        b_hight = values[endIndex].second - values[startIndex].second;
         length_of_line = std::sqrt(a_hight * a_hight + b_hight * b_hight);
         //length_of_line = std::sqrt(std::pow(values[startIndex].first - values[endIndex].first, 2) + std::pow(values[startIndex].second - values[endIndex].second, 2));
 
@@ -124,7 +126,7 @@ std::vector<int> duglas_peker(std::vector<std::pair<int, double>> values, double
         {
             //length_of_line1 = std::sqrt(std::pow(values[i].first - values[endIndex].first, 2) + std::pow(values[i].second - values[endIndex].second, 2));
             //length_of_line2 = std::sqrt(std::pow(values[startIndex].first - values[i].first, 2) + std::pow(values[startIndex].second - values[i].second, 2));
-            a_hight = values[i].first - values[endIndex].first;
+            /*a_hight = values[i].first - values[endIndex].first;
             b_hight = values[i].second - values[endIndex].second;
 
             length_of_line1 = std::sqrt(a_hight * a_hight + b_hight * b_hight);
@@ -135,7 +137,8 @@ std::vector<int> duglas_peker(std::vector<std::pair<int, double>> values, double
             length_of_line2 = std::sqrt(a_hight * a_hight + b_hight * b_hight);
 
             p = (length_of_line + length_of_line1 + length_of_line2) / 2;
-            d = std::sqrt(p * (p - length_of_line) * (p - length_of_line1) * (p - length_of_line2)) * 2 / length_of_line;
+            d = std::sqrt(p * (p - length_of_line) * (p - length_of_line1) * (p - length_of_line2)) * 2 / length_of_line;*/
+            d = std::abs(b_hight * values[i].first - a_hight * values[i].second + values[endIndex].first * values[startIndex].second - values[endIndex].second * values[startIndex].first) / length_of_line;
 
             if(d > dMax)
             {
